@@ -14,6 +14,7 @@ import {
   ExternalLink,
   ChevronDown,
   X,
+  Menu,
   Play,
   Award,
   Globe
@@ -23,6 +24,7 @@ import {
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -40,32 +42,100 @@ const Navbar = () => {
   ];
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 py-6 px-8 md:px-16 flex justify-between items-center ${
-        isScrolled ? 'bg-luxury-white/90 backdrop-blur-md border-b border-brick-red/5' : 'bg-transparent'
-      }`}
-    >
-      <div className="text-[10px] uppercase tracking-[0.5em] font-bold text-brick-red">
-        Rupa Mahato
-      </div>
-      <div className="hidden md:flex gap-12 text-brick-red">
-        {navLinks.map((link, i) => (
-          <motion.a
-            key={link.name}
-            href={link.href}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 0.6, y: 0 }}
-            transition={{ delay: 0.1 * i + 0.5, duration: 0.5 }}
-            whileHover={{ opacity: 1, y: -2 }}
-            className="text-[10px] uppercase font-black tracking-widest transition-all"
+    <>
+      <motion.nav
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 py-6 px-8 md:px-16 flex justify-between items-center ${
+          isScrolled || isMenuOpen ? 'bg-luxury-white/90 backdrop-blur-md border-b border-brick-red/5' : 'bg-transparent'
+        }`}
+      >
+        <div className="text-[10px] uppercase tracking-[0.5em] font-bold text-brick-red">
+          Rupa Mahato
+        </div>
+        
+        {/* Desktop Nav */}
+        <div className="hidden md:flex gap-12 text-brick-red">
+          {navLinks.map((link, i) => (
+            <motion.a
+              key={link.name}
+              href={link.href}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 0.6, y: 0 }}
+              transition={{ delay: 0.1 * i + 0.5, duration: 0.5 }}
+              whileHover={{ opacity: 1, y: -2 }}
+              className="text-[10px] uppercase font-black tracking-widest transition-all"
+            >
+              {link.name}
+            </motion.a>
+          ))}
+        </div>
+
+        {/* Mobile Toggle */}
+        <button 
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="md:hidden text-brick-red p-2 z-[60]"
+        >
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </motion.nav>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed inset-0 z-[55] bg-luxury-white flex flex-col items-center justify-center p-8 md:hidden"
           >
-            {link.name}
-          </motion.a>
-        ))}
-      </div>
-    </motion.nav>
+            <div className="flex flex-col gap-8 text-center">
+              {navLinks.map((link, i) => (
+                <motion.a
+                  key={link.name}
+                  href={link.href}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * i }}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-2xl font-serif italic text-brick-red hover:text-deep-brick transition-colors"
+                >
+                  {link.name}
+                </motion.a>
+              ))}
+            </div>
+
+            {/* Mobile Menu Footer Socials */}
+            <div className="absolute bottom-12 flex gap-8">
+              {[
+                { icon: Instagram, href: "https://www.instagram.com/sundartasevaofficial?igsh=MWpxOGd3c3V6ZDJ1dw==" },
+                { icon: Linkedin, href: "https://www.linkedin.com/in/rupa-mahato-920623400" },
+                { icon: Mail, href: "mailto:rupamah1405@gmail.com" }
+              ].map((link, i) => (
+                <motion.a
+                  key={i}
+                  href={link.href}
+                  target={link.href.startsWith('mailto') ? '_self' : '_blank'}
+                  rel={link.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.4 }}
+                  whileHover={{ opacity: 1, scale: 1.1 }}
+                  transition={{ delay: 0.5 + i * 0.1 }}
+                  className="text-brick-red transition-all"
+                >
+                  <link.icon size={20} />
+                </motion.a>
+              ))}
+            </div>
+            
+            {/* Background Texture for Mobile Menu */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-brick-red/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-brick-red/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
@@ -814,14 +884,15 @@ const Contact = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.15, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ scale: 1.1, y: -10 }}
-              className="group cursor-pointer flex flex-col items-center no-underline relative"
+              whileHover={{ scale: 1.05, y: -10 }}
+              whileTap={{ scale: 0.98 }}
+              className="group cursor-pointer flex flex-col items-center no-underline relative bg-white/40 backdrop-blur-sm border border-brick-red/5 p-10 rounded-[2.5rem] hover:bg-white hover:shadow-[0_40px_100px_-15px_rgba(143,20,2,0.15)] transition-all duration-700"
             >
               <div className="w-20 h-20 rounded-full border border-brick-red/10 flex items-center justify-center mb-6 group-hover:bg-brick-red group-hover:text-white group-hover:shadow-[0_20px_50px_-10px_rgba(143,20,2,0.4)] transition-all duration-500 bg-white relative z-10">
                 <link.icon size={28} strokeWidth={1.5}/>
               </div>
               <p className="text-[10px] uppercase font-black opacity-30 tracking-[0.3em] mb-2 group-hover:opacity-60 transition-opacity">{link.label}</p>
-              <p className="text-lg font-serif italic text-brick-red group-hover:text-deep-brick transition-colors">{link.value}</p>
+              <p className="text-lg font-serif italic text-brick-red group-hover:text-deep-brick transition-colors break-all text-center">{link.value}</p>
               
               {/* Subtle hover glow ring */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-24 bg-brick-red/5 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
