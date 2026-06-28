@@ -6,22 +6,15 @@
   --font-serif: "Playfair Display", serif;
   --font-cormorant: "Cormorant Garamond", serif;
   
-  --color-brick-red: #8f1402;
-  --color-deep-brick: #6d0f01;
-  --color-soft-brick: #b64131;
-  --color-beige: #F5F5F0;
-  --color-luxury-white: #FFFFFF;
+  --color-deep-red: #8E0D3C;
+  --color-blackcurrant: #1D1842;
+  --color-orange-brand: #EF3B33;
+  --color-rose-pink: #FDA1A2;
 }
 
 @layer base {
   body {
-    @apply bg-luxury-white text-brick-red font-sans antialiased;
-  }
-}
-
-@layer utilities {
-  .text-shadow-glow {
-    text-shadow: 0 0 20px rgba(143, 20, 2, 0.1);
+    @apply bg-gradient-to-br from-[#1D1842] via-[#1D1842] to-[#8E0D3C] text-white font-sans antialiased min-h-screen relative;
   }
 }
 
@@ -30,6 +23,6 @@
 }
 
 ::selection {
-  background: #8f1402;
+  background: #EF3B33;
   color: #FFFFFF;
 }
