@@ -17,6 +17,9 @@
     </filter>
   </defs>
 
+  <!-- Deep dark circle background to make the white monogram and ring perfectly visible on both light and dark browser themes, while corners remain fully transparent -->
+  <circle cx="60" cy="60" r="54" fill="#110C26" />
+
   <!-- Outer glowing blur (very subtle) -->
   <circle cx="60" cy="60" r="54" fill="none" stroke="#EF3B33" stroke-width="2" opacity="0.15" filter="url(#glow)" />
 
@@ -26,10 +29,10 @@
   <!-- Decorative Inner Ring (dashed/orbit) -->
   <circle cx="60" cy="60" r="48" fill="none" stroke="#FFFFFF" stroke-width="0.75" stroke-dasharray="4 3" opacity="0.2" />
 
-  <!-- Center Monogram "RM" (Vectorized for maximum crispness and compatibility) -->
-  <g>
+  <!-- Center Monogram "RM" (Vectorized for maximum crispness and compatibility, perfectly centered) -->
+  <g transform="translate(-1, 3.5)">
     <!-- Elegant Serif 'R' in White/Pink Gradient -->
-    <path d="M34,42 h11 c5,0 9,3 9,7.5 c0,3.5 -2.5,6.5 -6.5,7.5 l7.5,14 h-4.5 l-7,-13.5 h-3.5 v13.5 h-6 Z m6,4 v6 h5 c2.5,0 4,-1 4,-3 c0,-2 -1.5,-3 -4,-3 Z" fill="url(#text-grad)" />
+    <path d="M34,42 h11 c5,0 9,3 9,7.5 c0,3.5 -2.5,6.5 -6.5,7.5 l7.5,14 h-4.5 l-7,-13.5 h-3.5 v13.5 h-6 Z M40,46 v6 h5 c2.5,0 4,-1 4,-3 c0,-2 -1.5,-3 -4,-3 Z" fill="url(#text-grad)" />
     
     <!-- Bold Elegant 'M' in Accent Red/Orange -->
     <path d="M62,42 h5 l6,18 l6,-18 h5 v29 h-4 v-22.5 l-6,18.5 h-2 l-6,-18.5 v22.5 h-4 Z" fill="#EF3B33" opacity="0.95" />
