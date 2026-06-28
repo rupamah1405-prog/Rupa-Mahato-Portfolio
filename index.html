@@ -11,27 +11,53 @@
     
     <!-- Open Graph / Social SEO -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Rupa Mahato" />
     <meta property="og:title" content="Rupa Mahato | Social Media Manager & Content Strategist in Jamshedpur" />
     <meta property="og:description" content="Rupa Mahato is a Social Media Manager and Content Strategist in Jamshedpur helping brands grow through Instagram marketing, content strategy, SEO, Meta Ads, analytics, and social media management." />
-    
-    <!-- JSON-LD Schema Markup for Person profile for Perplexity, Gemini, ChatGPT, and Google Search -->
+    <meta property="og:image" content="https://rupamahato.com/android-chrome-512x512.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://rupamahato.com/" />
+    <link rel="canonical" href="https://rupamahato.com/" />
+
+    <!-- Twitter Card SEO -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@smmrupa02" />
+    <meta name="twitter:title" content="Rupa Mahato | Social Media Manager & Content Strategist in Jamshedpur" />
+    <meta name="twitter:description" content="Rupa Mahato is a Social Media Manager and Content Strategist in Jamshedpur helping brands grow through Instagram marketing, content strategy, SEO, Meta Ads, analytics, and social media management." />
+    <meta name="twitter:image" content="https://rupamahato.com/android-chrome-512x512.png" />
+
+    <!-- Google-Compliant Structured Data (JSON-LD) for Person, WebSite, and Personal Brand schemas -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@graph": [
         {
-          "@type": "Person",
-          "@id": "https://rupamahato-portfolio.netlify.app/#person",
+          "@type": "WebSite",
+          "@id": "https://rupamahato.com/#website",
+          "url": "https://rupamahato.com/",
           "name": "Rupa Mahato",
-          "url": "https://rupamahato-portfolio.netlify.app",
+          "alternateName": "Rupa Mahato Portfolio",
+          "description": "Professional portfolio website of Rupa Mahato, a Social Media Manager and Content Strategist in Jamshedpur.",
+          "publisher": {
+            "@id": "https://rupamahato.com/#person"
+          }
+        },
+        {
+          "@type": "Person",
+          "@id": "https://rupamahato.com/#person",
+          "name": "Rupa Mahato",
+          "url": "https://rupamahato.com/",
+          "image": "https://rupamahato.com/android-chrome-512x512.png",
+          "logo": "https://rupamahato.com/android-chrome-512x512.png",
+          "jobTitle": "Social Media Manager & Content Strategist",
+          "description": "Rupa Mahato is a Social Media Manager and Content Strategist in Jamshedpur helping brands grow through Instagram marketing, content strategy, SEO, Meta Ads, analytics, and social media management.",
           "address": {
             "@type": "PostalAddress",
             "addressLocality": "Jamshedpur",
             "addressRegion": "Jharkhand",
             "addressCountry": "IN"
           },
-          "description": "Professional portfolio website of Rupa Mahato, a Social Media Manager and Content Strategist specializing in content planning, Instagram growth, SEO, Meta Ads, social media marketing, analytics, and brand strategy.",
-          "jobTitle": "Social Media Manager & Content Strategist",
           "knowsAbout": [
             "Social Media Management",
             "Instagram Marketing",
@@ -44,17 +70,19 @@
             "Community Management"
           ],
           "sameAs": [
-            "https://www.linkedin.com/",
-            "https://www.instagram.com/smmrupa02"
+            "https://www.instagram.com/smmrupa02",
+            "https://www.linkedin.com/"
           ]
         },
         {
-          "@type": "LocalBusiness",
+          "@type": "ProfessionalService",
+          "@id": "https://rupamahato.com/#brand",
           "name": "Rupa Mahato - Social Media Management & Instagram Expert",
-          "image": "https://i.ibb.co/v4r0Tk0y/Chat-GPT-Image-Jun-22-2026-03-48-53-PM.png",
-          "@id": "https://rupamahato-portfolio.netlify.app/#store",
-          "url": "https://rupamahato-portfolio.netlify.app",
+          "image": "https://rupamahato.com/android-chrome-512x512.png",
+          "logo": "https://rupamahato.com/android-chrome-512x512.png",
+          "url": "https://rupamahato.com/",
           "telephone": "+91-0000000000",
+          "priceRange": "$$",
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "Jamshedpur, Jharkhand",
@@ -72,7 +100,6 @@
             "@type": "AdministrativeArea",
             "name": "Jamshedpur, Jharkhand, India"
           },
-          "priceRange": "$$",
           "openingHoursSpecification": {
             "@type": "OpeningHoursSpecification",
             "dayOfWeek": [

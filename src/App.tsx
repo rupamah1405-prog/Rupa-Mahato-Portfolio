@@ -1876,7 +1876,14 @@ const useSEO = (title: string, description: string) => {
     updateMeta('meta[name="description"]', 'description', description);
     updateMeta('meta[property="og:title"]', 'og:title', title, 'property');
     updateMeta('meta[property="og:description"]', 'og:description', description, 'property');
-    updateMeta('meta[property="og:url"]', 'og:url', "https://rupamahato-portfolio.netlify.app" + location.pathname, 'property');
+    updateMeta('meta[property="og:url"]', 'og:url', "https://rupamahato.com" + location.pathname, 'property');
+    updateMeta('meta[property="og:site_name"]', 'og:site_name', "Rupa Mahato", 'property');
+    updateMeta('meta[property="og:image"]', 'og:image', "https://rupamahato.com/android-chrome-512x512.png", 'property');
+    
+    updateMeta('meta[name="twitter:card"]', 'twitter:card', "summary_large_image");
+    updateMeta('meta[name="twitter:title"]', 'twitter:title', title);
+    updateMeta('meta[name="twitter:description"]', 'twitter:description', description);
+    updateMeta('meta[name="twitter:image"]', 'twitter:image', "https://rupamahato.com/android-chrome-512x512.png");
     
     // Canonical link
     let canonical = document.querySelector('link[rel="canonical"]');
@@ -1885,7 +1892,7 @@ const useSEO = (title: string, description: string) => {
       canonical.setAttribute('rel', 'canonical');
       document.head.appendChild(canonical);
     }
-    canonical.setAttribute('href', "https://rupamahato-portfolio.netlify.app" + location.pathname);
+    canonical.setAttribute('href', "https://rupamahato.com" + location.pathname);
   }, [title, description, location.pathname]);
 };
 
