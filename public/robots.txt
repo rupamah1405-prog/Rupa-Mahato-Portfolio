@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ais-pre-k442xced4sm5r7nokllfzs-726144632078.asia-east1.run.app/sitemap.xml
+Sitemap: https://rupamahato-portfolio.netlify.app/sitemap.xml
