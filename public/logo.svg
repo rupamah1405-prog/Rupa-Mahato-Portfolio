@@ -26,12 +26,13 @@
   <!-- Decorative Inner Ring (dashed/orbit) -->
   <circle cx="60" cy="60" r="48" fill="none" stroke="#FFFFFF" stroke-width="0.75" stroke-dasharray="4 3" opacity="0.2" />
 
-  <!-- Center Monogram "RM" -->
-  <g transform="translate(60, 64)">
-    <!-- Letter 'R' -->
-    <text x="-16" y="8" font-family="'Playfair Display', 'Cormorant Garamond', serif" font-weight="800" font-style="italic" font-size="34" fill="url(#text-grad)" letter-spacing="-0.05em">R</text>
-    <!-- Letter 'M' -->
-    <text x="3" y="11" font-family="'Playfair Display', 'Cormorant Garamond', serif" font-weight="700" font-style="normal" font-size="28" fill="#EF3B33" opacity="0.95">M</text>
+  <!-- Center Monogram "RM" (Vectorized for maximum crispness and compatibility) -->
+  <g>
+    <!-- Elegant Serif 'R' in White/Pink Gradient -->
+    <path d="M34,42 h11 c5,0 9,3 9,7.5 c0,3.5 -2.5,6.5 -6.5,7.5 l7.5,14 h-4.5 l-7,-13.5 h-3.5 v13.5 h-6 Z m6,4 v6 h5 c2.5,0 4,-1 4,-3 c0,-2 -1.5,-3 -4,-3 Z" fill="url(#text-grad)" />
+    
+    <!-- Bold Elegant 'M' in Accent Red/Orange -->
+    <path d="M62,42 h5 l6,18 l6,-18 h5 v29 h-4 v-22.5 l-6,18.5 h-2 l-6,-18.5 v22.5 h-4 Z" fill="#EF3B33" opacity="0.95" />
   </g>
 
   <!-- Accent Dots or stars representing strategy & performance -->
