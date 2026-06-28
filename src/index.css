@@ -26,3 +26,25 @@
   background: #EF3B33;
   color: #FFFFFF;
 }
+
+@keyframes rotate3d {
+  0% {
+    transform: perspective(400px) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(400px) rotateY(360deg);
+  }
+}
+
+.animate-rotate-3d {
+  animation: rotate3d 9s linear infinite;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+}
+
+/* Pause 3D rotation when the logo or the brand group is hovered */
+.animate-rotate-3d:hover,
+.group:hover .animate-rotate-3d {
+  animation-play-state: paused;
+}
+

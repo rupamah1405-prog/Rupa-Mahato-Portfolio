@@ -80,9 +80,13 @@ export const Services = () => {
   ];
 
   return (
-    <section id="services" className="pt-24 pb-28 px-8 md:px-16 bg-transparent scroll-mt-20 relative">
-      {/* Background glow overlay */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-rose-pink/[0.015] rounded-full blur-[130px] pointer-events-none" />
+    <section id="services" className="pt-24 pb-28 px-8 md:px-16 bg-transparent scroll-mt-20 relative border-t border-white/5">
+      {/* Dynamic Grid Background Backdrop */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(253,161,162,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(253,161,162,0.015)_1px,transparent_1px)] bg-[size:5rem_5rem] pointer-events-none" />
+
+      {/* Cinematic soft glow leaks */}
+      <div className="absolute top-1/4 left-1/4 w-[35%] h-[35%] bg-rose-pink/[0.025] rounded-full blur-[130px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[35%] h-[35%] bg-[#EF3B33]/[0.02] rounded-full blur-[130px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* local SEO Optimized Section Header */}
@@ -107,11 +111,11 @@ export const Services = () => {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 0.8 }}
             viewport={{ once: true }}
-            className="text-white font-sans text-sm md:text-base mt-4 max-w-3xl mx-auto font-light"
+            className="text-white/80 font-sans text-sm md:text-base mt-4 max-w-3xl mx-auto font-light"
           >
             Premium, metrics-driven organic and paid strategies perfectly customized to scale your Brand presence, audience relationship, and local business leads.
           </motion.p>
-          <div className="h-px bg-white/10 w-32 mx-auto mt-8 shadow-sm" />
+          <div className="h-0.5 bg-gradient-to-r from-transparent via-orange-brand/50 to-transparent w-40 mx-auto mt-8" />
         </div>
  
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -122,13 +126,16 @@ export const Services = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.05, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ y: -6, scale: 1.01 }}
-              style={{ backgroundColor: "#B55239", borderColor: "rgba(253, 161, 162, 0.15)" }}
-              className="relative group p-10 border rounded-[2.5rem] hover:bg-[#c25e45] hover:border-white/30 transition-all duration-500 overflow-hidden flex flex-col justify-between shadow-[0_15px_35px_-10px_rgba(0,0,0,0.4)] hover:shadow-[0_40px_100px_-15px_rgba(0,0,0,0.5)]"
+              whileHover={{ 
+                y: -10, 
+                borderColor: "rgba(239, 59, 51, 0.4)",
+                boxShadow: "0 20px 40px -15px rgba(239, 59, 51, 0.25)"
+              }}
+              className="relative group p-10 bg-blackcurrant/40 backdrop-blur-md border border-white/10 rounded-[2rem] transition-all duration-500 overflow-hidden flex flex-col justify-between shadow-[0_15px_35px_-10px_rgba(0,0,0,0.4)]"
             >
               <div>
                 {/* Icon wrapper with glow effect */}
-                <div className="w-14 h-14 bg-orange-brand/10 border border-orange-brand/20 rounded-2xl flex items-center justify-center text-orange-brand mb-8 group-hover:bg-orange-brand group-hover:text-white group-hover:scale-110 transition-all duration-500">
+                <div className="w-14 h-14 bg-orange-brand/10 border border-orange-brand/20 rounded-2xl flex items-center justify-center text-orange-brand mb-8 group-hover:bg-orange-brand group-hover:text-white group-hover:scale-110 transition-all duration-500 shadow-md">
                   <item.icon size={24} strokeWidth={1.5} />
                 </div>
                 
@@ -136,7 +143,7 @@ export const Services = () => {
                   {item.title}
                 </h3>
                 
-                <p className="text-sm font-sans text-white leading-relaxed font-light mb-8">
+                <p className="text-sm font-sans text-white/70 leading-relaxed font-light mb-8">
                   {item.desc}
                 </p>
               </div>
@@ -147,7 +154,7 @@ export const Services = () => {
                   {item.bulletPoints.map((pt, pi) => (
                     <li key={pi} className="flex items-center gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-rose-pink/40 group-hover:bg-orange-brand transition-colors" />
-                      <span className="text-[10px] uppercase tracking-wider font-bold text-white transition-colors">
+                      <span className="text-[10px] uppercase tracking-wider font-bold text-white/80 group-hover:text-white transition-colors">
                         {pt}
                       </span>
                     </li>

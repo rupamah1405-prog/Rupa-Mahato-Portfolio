@@ -1,9 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useSpring, useTransform, useMotionValue } from 'motion/react';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { CustomCursor } from './components/CustomCursor';
 import { KoiPond } from './components/KoiPond';
 import { ContactForm } from './components/ContactForm';
 import { RMLogo } from './components/RMLogo';
+import { BlogManager } from './components/BlogManager';
+import { 
+  FeaturedServices, 
+  FeaturedWork, 
+  WhyWorkWithMe, 
+  ToolsIUse, 
+  LatestInsights, 
+  FinalCTA 
+} from './components/HomeSections';
 import { socialsConfig } from './config/socials';
 import { 
   Instagram, 
@@ -23,7 +33,15 @@ import {
   Play,
   Award,
   Globe,
-  Clock
+  Clock,
+  Lock,
+  Unlock,
+  Eye,
+  EyeOff,
+  Settings,
+  AlertCircle,
+  ArrowLeft,
+  Check
 } from 'lucide-react';
 
 // --- Global Data Constants ---
@@ -50,26 +68,12 @@ const EXPERIENCE_SUMMARY = [
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('hero');
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 30);
-
-      // Simple active section detection
-      const sections = ['hero', 'about', 'experience', 'selected-work', 'insights', 'contact'];
-      let currentSection = 'hero';
-      
-      for (const section of sections) {
-        const el = document.getElementById(section);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= window.innerHeight * 0.4) {
-            currentSection = section;
-          }
-        }
-      }
-      setActiveSection(currentSection);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -78,12 +82,12 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: 'Home', href: '#hero' },
-    { name: 'About', href: '#about' },
-    { name: 'Experience', href: '#experience' },
-    { name: 'Work', href: '#selected-work' },
-    { name: 'Blog', href: '#insights' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Home', path: '/' },
+    { name: 'About', path: '/about' },
+    { name: 'Experience', path: '/experience' },
+    { name: 'Work', path: '/work' },
+    { name: 'Blog', path: '/blog' },
+    { name: 'Contact', path: '/contact' },
   ];
 
   return (
@@ -104,7 +108,7 @@ const Navbar = () => {
           {/* Brand/Logo on the left */}
           <div 
             onClick={() => {
-              document.querySelector('#hero')?.scrollIntoView({ behavior: 'smooth' });
+              navigate('/');
             }}
             className="flex items-center gap-3 cursor-pointer group select-none flex-shrink-0"
           >
@@ -117,14 +121,12 @@ const Navbar = () => {
           {/* Center Navigation Capsule */}
           <div className="hidden lg:flex items-center bg-black/20 backdrop-blur-sm border border-white/5 rounded-[12px] p-1 gap-2.5">
             {navLinks.map((link) => {
-              const isActive = activeSection === link.href.slice(1);
+              const isActive = location.pathname === link.path;
               return (
-                <a
+                <div
                   key={link.name}
-                  href={link.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.querySelector(link.href)?.scrollIntoView({ behavior: 'smooth' });
+                  onClick={() => {
+                    navigate(link.path);
                   }}
                   className={`text-[9px] uppercase font-bold tracking-[0.2em] w-28 h-10 flex items-center justify-center rounded-[8px] transition-all duration-300 ease-in-out select-none cursor-pointer ${
                     isActive 
@@ -133,7 +135,7 @@ const Navbar = () => {
                   }`}
                 >
                   <span>{link.name}</span>
-                </a>
+                </div>
               );
             })}
           </div>
@@ -141,7 +143,7 @@ const Navbar = () => {
           {/* Right CTA Button (Desktop) */}
           <div className="hidden lg:block flex-shrink-0">
             <motion.button
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => navigate('/contact')}
               whileHover={{ 
                 scale: 1.05,
                 boxShadow: "0 10px 25px -5px rgba(239, 59, 51, 0.45)"
@@ -180,22 +182,20 @@ const Navbar = () => {
 
             <div className="flex flex-col gap-6 text-center w-full z-10 my-auto">
               {navLinks.map((link, i) => {
-                const isActive = activeSection === link.href.slice(1);
+                const isActive = location.pathname === link.path;
                 return (
-                  <motion.a
+                  <motion.div
                     key={link.name}
-                    href={link.href}
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.05 * i }}
-                    onClick={(e) => {
-                      e.preventDefault();
+                    onClick={() => {
                       setIsMenuOpen(false);
                       setTimeout(() => {
-                        document.querySelector(link.href)?.scrollIntoView({ behavior: 'smooth' });
+                        navigate(link.path);
                       }, 250);
                     }}
-                    className={`text-2xl font-serif italic transition-all duration-300 relative inline-block mx-auto ${
+                    className={`text-2xl font-serif italic transition-all duration-300 relative inline-block mx-auto cursor-pointer ${
                       isActive ? 'text-[#EF3B33] font-bold' : 'text-white hover:text-[#EF3B33]'
                     }`}
                   >
@@ -203,7 +203,7 @@ const Navbar = () => {
                     {isActive && (
                       <span className="absolute -bottom-1 left-2 right-2 h-0.5 bg-[#EF3B33] rounded-full" />
                     )}
-                  </motion.a>
+                  </motion.div>
                 );
               })}
             </div>
@@ -214,7 +214,7 @@ const Navbar = () => {
                 onClick={() => {
                   setIsMenuOpen(false);
                   setTimeout(() => {
-                    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                    navigate('/contact');
                   }, 250);
                 }}
                 className="w-full py-4 bg-[#EF3B33] text-white uppercase text-[10px] font-black tracking-widest rounded-full hover:bg-[#D9352F] transition-all duration-300 text-center border-none cursor-pointer"
@@ -249,6 +249,7 @@ const Navbar = () => {
 };
 
 const Hero = () => {
+  const navigate = useNavigate();
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden w-full bg-transparent" id="hero">
       {/* Dynamic Grid Background Backdrop */}
@@ -265,6 +266,7 @@ const Hero = () => {
       </div>
 
       <div className="max-w-[1720px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 pt-28 pb-12 sm:pt-36 sm:pb-16 md:pt-40 lg:pt-44 z-10 w-full animate-fade-in">
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
           
           {/* Main Typography Statement Column */}
@@ -325,7 +327,7 @@ const Hero = () => {
               className="flex flex-col sm:flex-row gap-5 pb-4"
             >
               <motion.button
-                onClick={() => document.getElementById('selected-work')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => navigate('/work')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
                 className="px-10 py-5 bg-[#EF3B33] text-white uppercase text-[9px] font-black tracking-widest rounded-full hover:bg-[#D9352F] hover:shadow-[0_20px_40px_-5px_rgba(239,59,51,0.35)] transition-all duration-300 text-center cursor-pointer font-sans border-none"
@@ -333,7 +335,7 @@ const Hero = () => {
                 View My Work
               </motion.button>
               <motion.button
-                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => navigate('/contact')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
                 className="px-10 py-5 bg-white/5 backdrop-blur-sm border border-white/10 text-white uppercase text-[9px] font-black tracking-widest rounded-full hover:bg-white/10 hover:border-[#EF3B33] hover:shadow-[0_20px_40px_-10px_rgba(239,59,51,0.1)] transition-all duration-300 text-center cursor-pointer font-sans"
@@ -681,6 +683,7 @@ const Results = () => {
 };
 
 const SelectedWork = () => {
+  const navigate = useNavigate();
   const projects = [
     {
       title: "SEO Growth Strategy",
@@ -801,7 +804,7 @@ const SelectedWork = () => {
               {/* View Case Study Button */}
               <motion.button 
                 onClick={() => {
-                  document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                  navigate('/contact');
                 }}
                 whileTap={{ scale: 0.98 }}
                 className="w-full bg-[#ff6b35]/10 text-white hover:bg-[#ff6b35] border border-[#ff6b35]/30 hover:border-[#ff6b35] px-5 py-3.5 text-[9px] uppercase font-black tracking-[0.25em] flex items-center justify-center gap-2 rounded-xl transition-all duration-300 font-sans cursor-pointer mt-auto"
@@ -949,10 +952,13 @@ const ServicesSection = () => {
   };
 
   return (
-    <section id="services" className="py-24 px-4 sm:px-6 md:px-8 lg:px-10 bg-white relative border-y border-slate-100 z-10 text-slate-900 overflow-hidden">
-      {/* Decorative ambient background shape */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[#ff6b35]/5 to-transparent rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-[#EF3B33]/5 to-transparent rounded-full blur-[120px] pointer-events-none" />
+    <section id="services" className="py-24 px-4 sm:px-6 md:px-8 lg:px-10 bg-transparent relative border-t border-white/5 z-10 text-white overflow-hidden">
+      {/* Dynamic Grid Background Backdrop */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(253,161,162,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(253,161,162,0.015)_1px,transparent_1px)] bg-[size:5rem_5rem] pointer-events-none" />
+
+      {/* Cinematic soft glow leaks */}
+      <div className="absolute top-1/4 left-1/4 w-[35%] h-[35%] bg-rose-pink/[0.025] rounded-full blur-[130px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[35%] h-[35%] bg-[#EF3B33]/[0.02] rounded-full blur-[130px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto w-full z-10 relative">
         {/* Header */}
@@ -961,7 +967,7 @@ const ServicesSection = () => {
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 0.8, y: 0 }}
             viewport={{ once: true }}
-            className="text-[10px] uppercase tracking-[0.45em] font-black text-[#ff6b35] block mb-3"
+            className="text-[10px] uppercase tracking-[0.45em] font-black text-rose-pink block mb-3"
           >
             SERVICES & SOLUTIONS
           </motion.span>
@@ -970,7 +976,7 @@ const ServicesSection = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="text-4xl md:text-5xl font-serif text-slate-900 font-medium tracking-tight"
+            className="text-4xl md:text-5xl font-serif text-white font-medium tracking-tight"
           >
             How I Can Help Your Brand Grow
           </motion.h2>
@@ -979,11 +985,11 @@ const ServicesSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1, duration: 0.8 }}
-            className="text-sm sm:text-base font-sans text-slate-500 max-w-2xl mx-auto mt-4 font-light leading-relaxed"
+            className="text-sm sm:text-base font-sans text-white/80 max-w-2xl mx-auto mt-4 font-light leading-relaxed"
           >
             Strategic marketing solutions designed to increase visibility, engagement, and business growth.
           </motion.p>
-          <div className="h-0.5 bg-gradient-to-r from-transparent via-[#ff6b35]/40 to-transparent w-32 mx-auto mt-6" />
+          <div className="h-0.5 bg-gradient-to-r from-transparent via-orange-brand/50 to-transparent w-40 mx-auto mt-6" />
         </div>
 
         {/* Services Cards Grid */}
@@ -997,32 +1003,32 @@ const ServicesSection = () => {
               transition={{ delay: i * 0.1, duration: 0.8 }}
               whileHover={{ 
                 y: -10,
-                boxShadow: "0 25px 50px -12px rgba(255, 107, 53, 0.08)",
-                borderColor: "rgba(255, 107, 53, 0.3)"
+                boxShadow: "0 20px 40px -15px rgba(239, 59, 51, 0.25)",
+                borderColor: "rgba(239, 59, 51, 0.4)"
               }}
-              className="group relative flex flex-col justify-between bg-white border border-slate-100 rounded-[24px] p-6 sm:p-8 transition-all duration-300 shadow-[0_8px_30px_rgba(0,0,0,0.015)] h-full"
+              className="group relative flex flex-col justify-between bg-blackcurrant/40 backdrop-blur-md border border-white/10 rounded-[2rem] p-6 sm:p-8 transition-all duration-300 shadow-[0_8px_30px_rgba(0,0,0,0.15)] h-full"
             >
               <div>
                 {/* Visual Accent Top Line on Hover */}
-                <div className="absolute inset-x-0 top-0 h-1 bg-[#ff6b35] rounded-t-[24px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-x-0 top-0 h-1 bg-[#EF3B33] rounded-t-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 
                 {/* Title */}
-                <h3 className="text-xl font-serif font-medium text-slate-900 mb-4 tracking-tight group-hover:text-[#ff6b35] transition-colors duration-300">
+                <h3 className="text-xl font-serif font-medium text-white mb-4 tracking-tight group-hover:text-rose-pink transition-colors duration-300">
                   {service.title}
                 </h3>
                 
                 {/* Description */}
-                <p className="text-xs sm:text-sm text-slate-500 font-sans font-light leading-relaxed mb-6">
+                <p className="text-xs sm:text-sm text-white/70 font-sans font-light leading-relaxed mb-6">
                   {service.desc}
                 </p>
                 
-                <div className="h-px bg-slate-100 w-full mb-6" />
+                <div className="h-px bg-white/10 w-full mb-6" />
 
                 {/* Bullets Checklist */}
                 <ul className="space-y-3.5">
                   {service.bullets.map((bullet, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-xs sm:text-sm text-slate-600 font-light">
-                      <span className="text-[#ff6b35] font-semibold shrink-0 text-base leading-none">✓</span>
+                    <li key={idx} className="flex items-start gap-3 text-xs sm:text-sm text-white/80 font-light">
+                      <span className="text-[#EF3B33] font-semibold shrink-0 text-base leading-none">✓</span>
                       <span>{bullet}</span>
                     </li>
                   ))}
@@ -1031,10 +1037,10 @@ const ServicesSection = () => {
 
               {/* Action Button */}
               <motion.button
-                whileHover={{ scale: 1.02, backgroundColor: "#e24e1b" }}
+                whileHover={{ scale: 1.02, backgroundColor: "#EF3B33" }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleOpenModal(service.title)}
-                className="w-full mt-8 py-3.5 bg-[#ff6b35] text-white text-[10px] uppercase font-black tracking-[0.25em] rounded-xl transition-all duration-300 cursor-pointer text-center font-sans hover:shadow-[0_10px_20px_rgba(255,107,53,0.2)] border-none"
+                className="w-full mt-8 py-3.5 bg-[#EF3B33]/10 text-white hover:bg-[#EF3B33] border border-[#EF3B33]/20 hover:border-[#EF3B33] text-[10px] uppercase font-black tracking-[0.25em] rounded-xl transition-all duration-300 cursor-pointer text-center font-sans hover:shadow-[0_10px_20px_rgba(239,59,51,0.2)]"
               >
                 Hire Me
               </motion.button>
@@ -1053,7 +1059,7 @@ const ServicesSection = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={handleCloseModal}
-              className="absolute inset-0 bg-slate-950/75 backdrop-blur-md"
+              className="absolute inset-0 bg-[#0F0B26]/80 backdrop-blur-md"
             />
 
             {/* Modal Body */}
@@ -1062,12 +1068,12 @@ const ServicesSection = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", duration: 0.5 }}
-              className="relative bg-white text-slate-900 rounded-[24px] shadow-2xl max-w-lg w-full overflow-hidden border border-slate-100 z-10 p-6 sm:p-8"
+              className="relative bg-[#1D1842] text-white rounded-[2rem] shadow-2xl max-w-lg w-full overflow-hidden border border-white/10 z-10 p-6 sm:p-8"
             >
               {/* Close Button */}
               <button 
                 onClick={handleCloseModal}
-                className="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-all cursor-pointer border-none"
+                className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-all cursor-pointer border-none"
               >
                 <X size={16} />
               </button>
@@ -1076,10 +1082,10 @@ const ServicesSection = () => {
                 <form onSubmit={handleSubmit} className="space-y-5 text-left">
                   {/* Title & Subtitle */}
                   <div>
-                    <h3 className="text-2xl font-serif font-medium text-slate-900 tracking-tight">
+                    <h3 className="text-2xl font-serif font-medium text-white tracking-tight">
                       Let's Discuss Your Project
                     </h3>
-                    <p className="text-xs text-slate-500 font-sans font-light mt-1.5 leading-relaxed">
+                    <p className="text-xs text-white/70 font-sans font-light mt-1.5 leading-relaxed">
                       Fill out the form below and I'll get back to you within 24 hours.
                     </p>
                   </div>
@@ -1087,8 +1093,8 @@ const ServicesSection = () => {
                   <div className="space-y-4">
                     {/* Full Name */}
                     <div>
-                      <label className="text-[10px] uppercase font-bold tracking-[0.15em] text-slate-500 block mb-1.5">
-                        Full Name <span className="text-[#ff6b35]">*</span>
+                      <label className="text-[10px] uppercase font-bold tracking-[0.15em] text-white/60 block mb-1.5">
+                        Full Name <span className="text-[#EF3B33]">*</span>
                       </label>
                       <input 
                         type="text" 
@@ -1097,14 +1103,14 @@ const ServicesSection = () => {
                         onChange={handleChange}
                         required
                         placeholder="Your full name"
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#ff6b35] focus:ring-1 focus:ring-[#ff6b35] transition-all"
+                        className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-[#EF3B33] focus:ring-1 focus:ring-[#EF3B33] transition-all"
                       />
                     </div>
 
                     {/* Email Address */}
                     <div>
-                      <label className="text-[10px] uppercase font-bold tracking-[0.15em] text-slate-500 block mb-1.5">
-                        Email Address <span className="text-[#ff6b35]">*</span>
+                      <label className="text-[10px] uppercase font-bold tracking-[0.15em] text-white/60 block mb-1.5">
+                        Email Address <span className="text-[#EF3B33]">*</span>
                       </label>
                       <input 
                         type="email" 
@@ -1113,13 +1119,13 @@ const ServicesSection = () => {
                         onChange={handleChange}
                         required
                         placeholder="Your email address"
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#ff6b35] focus:ring-1 focus:ring-[#ff6b35] transition-all"
+                        className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-[#EF3B33] focus:ring-1 focus:ring-[#EF3B33] transition-all"
                       />
                     </div>
 
                     {/* Company / Brand Name */}
                     <div>
-                      <label className="text-[10px] uppercase font-bold tracking-[0.15em] text-slate-500 block mb-1.5">
+                      <label className="text-[10px] uppercase font-bold tracking-[0.15em] text-white/60 block mb-1.5">
                         Company / Brand Name
                       </label>
                       <input 
@@ -1128,50 +1134,50 @@ const ServicesSection = () => {
                         value={formData.company}
                         onChange={handleChange}
                         placeholder="Your company or brand name"
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#ff6b35] focus:ring-1 focus:ring-[#ff6b35] transition-all"
+                        className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-[#EF3B33] focus:ring-1 focus:ring-[#EF3B33] transition-all"
                       />
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {/* Service Dropdown */}
                       <div>
-                        <label className="text-[10px] uppercase font-bold tracking-[0.15em] text-slate-500 block mb-1.5">
+                        <label className="text-[10px] uppercase font-bold tracking-[0.15em] text-white/60 block mb-1.5">
                           Service Selected
                         </label>
                         <select 
                           name="service"
                           value={selectedService}
                           onChange={(e) => setSelectedService(e.target.value)}
-                          className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-[#ff6b35] focus:ring-1 focus:ring-[#ff6b35] transition-all cursor-pointer"
+                          className="w-full px-4 py-3 bg-[#110D2C] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#EF3B33] focus:ring-1 focus:ring-[#EF3B33] transition-all cursor-pointer"
                         >
                           {services.map((s, idx) => (
-                            <option key={idx} value={s.title}>{s.title}</option>
+                            <option key={idx} value={s.title} className="bg-[#1D1842]">{s.title}</option>
                           ))}
                         </select>
                       </div>
 
                       {/* Budget Dropdown */}
                       <div>
-                        <label className="text-[10px] uppercase font-bold tracking-[0.15em] text-slate-500 block mb-1.5">
+                        <label className="text-[10px] uppercase font-bold tracking-[0.15em] text-white/60 block mb-1.5">
                           Budget Range
                         </label>
                         <select 
                           name="budget"
                           value={formData.budget}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-[#ff6b35] focus:ring-1 focus:ring-[#ff6b35] transition-all cursor-pointer"
+                          className="w-full px-4 py-3 bg-[#110D2C] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#EF3B33] focus:ring-1 focus:ring-[#EF3B33] transition-all cursor-pointer"
                         >
-                          <option value="< $1,000">&lt; $1,000</option>
-                          <option value="$1,000 - $3,000">$1,000 - $3,000</option>
-                          <option value="$3,000 - $5,000">$3,000 - $5,000</option>
-                          <option value="$5,000+">$5,000+</option>
+                          <option value="< $1,000" className="bg-[#1D1842]">&lt; $1,000</option>
+                          <option value="$1,000 - $3,000" className="bg-[#1D1842]">$1,000 - $3,000</option>
+                          <option value="$3,000 - $5,000" className="bg-[#1D1842]">$3,000 - $5,000</option>
+                          <option value="$5,000+" className="bg-[#1D1842]">$5,000+</option>
                         </select>
                       </div>
                     </div>
 
                     {/* Project Details */}
                     <div>
-                      <label className="text-[10px] uppercase font-bold tracking-[0.15em] text-slate-500 block mb-1.5">
+                      <label className="text-[10px] uppercase font-bold tracking-[0.15em] text-white/60 block mb-1.5">
                         Project Details
                       </label>
                       <textarea 
@@ -1180,7 +1186,7 @@ const ServicesSection = () => {
                         value={formData.details}
                         onChange={handleChange}
                         placeholder="Tell me about your business targets, metrics, or timeline..."
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#ff6b35] focus:ring-1 focus:ring-[#ff6b35] transition-all resize-none"
+                        className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-[#EF3B33] focus:ring-1 focus:ring-[#EF3B33] transition-all resize-none"
                       />
                     </div>
                   </div>
@@ -1191,7 +1197,7 @@ const ServicesSection = () => {
                     disabled={isSubmitting}
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.99 }}
-                    className="w-full py-4 bg-[#ff6b35] text-white text-[10px] uppercase font-black tracking-[0.25em] rounded-xl hover:bg-[#e24e1b] transition-all duration-300 flex items-center justify-center gap-2.5 cursor-pointer border-none disabled:opacity-50 mt-2"
+                    className="w-full py-4 bg-[#EF3B33] text-white text-[10px] uppercase font-black tracking-[0.25em] rounded-xl hover:bg-[#d82a22] transition-all duration-300 flex items-center justify-center gap-2.5 cursor-pointer border-none disabled:opacity-50 mt-2"
                   >
                     {isSubmitting ? (
                       <>
@@ -1209,15 +1215,15 @@ const ServicesSection = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   className="py-8 text-center space-y-5"
                 >
-                  <div className="w-16 h-16 bg-[#ff6b35]/10 text-[#ff6b35] rounded-full flex items-center justify-center mx-auto">
+                  <div className="w-16 h-16 bg-[#EF3B33]/10 text-[#EF3B33] rounded-full flex items-center justify-center mx-auto">
                     <span className="text-3xl leading-none">✓</span>
                   </div>
                   
                   <div className="space-y-2">
-                    <h3 className="font-serif text-2xl text-slate-900 font-medium tracking-tight">
+                    <h3 className="font-serif text-2xl text-white font-medium tracking-tight">
                       Inquiry Dispatched!
                     </h3>
-                    <p className="text-sm font-sans text-slate-600 leading-relaxed max-w-sm mx-auto">
+                    <p className="text-sm font-sans text-white/70 leading-relaxed max-w-sm mx-auto">
                       Thank you for reaching out. I've received your message and will contact you soon.
                     </p>
                   </div>
@@ -1225,7 +1231,7 @@ const ServicesSection = () => {
                   <motion.button
                     onClick={handleCloseModal}
                     whileHover={{ scale: 1.02 }}
-                    className="px-8 py-3 bg-[#ff6b35] text-white text-[9px] uppercase font-black tracking-widest rounded-xl hover:bg-[#e24e1b] transition-all cursor-pointer border-none"
+                    className="px-8 py-3 bg-[#EF3B33] text-white text-[9px] uppercase font-black tracking-widest rounded-xl hover:bg-[#d82a22] transition-all cursor-pointer border-none"
                   >
                     Close Window
                   </motion.button>
@@ -1246,9 +1252,23 @@ const MediumIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
 );
 
 const InsightsSection = () => {
-  const articles = [
+  const [articles, setArticles] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  
+  // Visibility State management
+  const [hiddenArticleIds] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem("medium_hidden_articles");
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const fallbackArticles = [
     {
-      id: 1,
+      id: "fallback-1",
       title: "Best SMM in Jamshedpur Shares 5 Instagram Growth Strategies That Actually Work",
       category: "Social Media Marketing • Instagram Growth",
       excerpt: "Learn five practical Instagram growth strategies that help businesses increase reach, engagement, and build a stronger presence on Instagram. Discover actionable tips on content planning, audience engagement, profile optimization, and sustainable Instagram growth.",
@@ -1261,7 +1281,7 @@ const InsightsSection = () => {
       platform: "Medium"
     },
     {
-      id: 2,
+      id: "fallback-2",
       title: "How I Ranked a Medium Article on Google",
       category: "SEO • Google Ranking",
       excerpt: "Learn the exact step-by-step strategies I used to rank a Medium article on the first page of Google in just three weeks. Discover actionable insights on keyword research, on-page SEO optimization, and leveraging Medium's domain authority.",
@@ -1274,7 +1294,7 @@ const InsightsSection = () => {
       platform: "Medium"
     },
     {
-      id: 3,
+      id: "fallback-3",
       title: "The SEO Playbook Just Got Rewritten",
       category: "SEO • Google Core Update",
       excerpt: "Google's May 2026 core update and major AI search redesign have fundamentally changed the organic landscape. Discover what actually changed, standard quality criteria shifts, and how to adapt your content strategy to rank in an AI-first search environment.",
@@ -1288,10 +1308,59 @@ const InsightsSection = () => {
     }
   ];
 
+  useEffect(() => {
+    let active = true;
+    const fetchArticles = async () => {
+      try {
+        const response = await fetch("/api/medium");
+        if (!response.ok) {
+          throw new Error(`Error fetching articles: ${response.statusText}`);
+        }
+        const data = await response.json();
+        if (data.success && data.articles && data.articles.length > 0) {
+          if (active) {
+            // Remove duplicates 100% reliably
+            const uniqueArticles: any[] = [];
+            const seenIds = new Set<string>();
+            data.articles.forEach((art: any) => {
+              const artId = String(art.id);
+              if (!seenIds.has(artId)) {
+                seenIds.add(artId);
+                uniqueArticles.push(art);
+              }
+            });
+            setArticles(uniqueArticles);
+            setIsError(false);
+          }
+        } else {
+          throw new Error("Invalid response format or empty feed");
+        }
+      } catch (err) {
+        console.error("Medium RSS fetch failed:", err);
+        if (active) {
+          setIsError(true);
+          setArticles(fallbackArticles);
+        }
+      } finally {
+        if (active) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchArticles();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Filter out hidden articles for regular visitors
+  const displayedArticles = articles.filter(article => !hiddenArticleIds.includes(String(article.id)));
+
   return (
     <section id="insights" className="py-24 px-4 sm:px-6 md:px-8 lg:px-10 bg-transparent scroll-mt-20 relative border-t border-white/5" aria-labelledby="insights-heading">
-      {/* Article Schema Markup for SEO */}
-      {articles.map((article) => (
+      {/* Article Schema Markup for SEO (only for visible articles) */}
+      {articles.filter(article => !hiddenArticleIds.includes(String(article.id))).map((article) => (
         <script 
           key={`schema-${article.id}`} 
           type="application/ld+json"
@@ -1352,103 +1421,145 @@ const InsightsSection = () => {
           >
             Sharing practical insights on social media marketing, content strategy, Instagram growth, and digital branding. Read my latest articles on content strategy, SEO, social media growth, digital marketing, and brand building.
           </motion.p>
+          
           <div className="h-0.5 bg-gradient-to-r from-transparent via-[#EF3B33]/50 to-transparent w-40 mx-auto mt-6" />
         </div>
 
-        {/* Responsive Grid Layout designed for Future Readiness and current elegance */}
-        <div className={`grid grid-cols-1 ${articles.length > 2 ? 'md:grid-cols-2 lg:grid-cols-3' : articles.length === 2 ? 'md:grid-cols-2 max-w-5xl mx-auto' : 'max-w-3xl mx-auto'} gap-8`}>
-          {articles.map((article, i) => (
-            <motion.article
-              key={article.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ 
-                y: -8,
-                boxShadow: "0 25px 50px -12px rgba(239, 59, 51, 0.12)",
-                borderColor: "rgba(239, 59, 51, 0.2)"
-              }}
-              onClick={() => window.open(article.link, '_blank', 'noopener,noreferrer')}
-              className="group relative flex flex-col justify-between h-full bg-white/[0.01] hover:bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-[2rem] overflow-hidden transition-all duration-500 p-6 sm:p-8 cursor-pointer"
-            >
-              <div>
-                {/* Featured Image Container or Elegant Text-Only Header */}
-                {article.image ? (
-                  <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/10 mb-6 bg-black/20">
-                    <img 
-                      src={article.image} 
-                      alt={article.alt}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      loading="lazy"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0F0B26]/90 via-transparent to-transparent pointer-events-none" />
-                    
-                    {/* Category Overlay with subtle Medium branding */}
-                    <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-                      <div className="flex items-center gap-1.5 px-3 py-1 bg-[#1D1842]/80 backdrop-blur-md rounded-full border border-white/10 shadow-lg">
-                        <MediumIcon className="w-3 h-3 text-[#FDA1A2]" />
+        {/* Fallback Notice */}
+        {isError && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-xl mx-auto mb-12 text-center px-6 py-3 bg-white/[0.02] border border-[#EF3B33]/20 text-white/60 rounded-2xl text-[10px] font-mono tracking-wider uppercase"
+          >
+            ● Live feed sync delayed. Showing cached publications.
+          </motion.div>
+        )}
+
+        {isLoading ? (
+          /* Elegant Loading Skeleton Skeletons */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-[1720px] mx-auto">
+            {[1, 2, 3].map((n) => (
+              <div 
+                key={n}
+                className="bg-white/[0.01] border border-white/5 rounded-[2rem] p-6 sm:p-8 flex flex-col h-[500px] animate-pulse"
+              >
+                <div className="w-full aspect-[16/10] bg-white/5 rounded-2xl mb-6" />
+                <div className="h-2 bg-white/10 rounded w-1/3 mb-4" />
+                <div className="h-6 bg-white/10 rounded w-5/6 mb-4" />
+                <div className="space-y-2 mb-6">
+                  <div className="h-3 bg-white/5 rounded w-full" />
+                  <div className="h-3 bg-white/5 rounded w-5/6" />
+                  <div className="h-3 bg-white/5 rounded w-2/3" />
+                </div>
+                <div className="h-12 bg-white/5 rounded-xl mt-auto w-full" />
+              </div>
+            ))}
+          </div>
+        ) : displayedArticles.length === 0 ? (
+          <div className="text-center py-24 max-w-xl mx-auto">
+            <EyeOff size={48} className="text-white/20 mx-auto mb-4" />
+            <p className="text-white/60 text-sm font-sans font-light leading-relaxed">
+              No Medium articles are set to be visible at this time. Check back soon for new publications!
+            </p>
+          </div>
+        ) : (
+          /* Responsive Grid Layout */
+          <div className={`grid grid-cols-1 ${displayedArticles.length > 2 ? 'md:grid-cols-2 lg:grid-cols-3' : displayedArticles.length === 2 ? 'md:grid-cols-2 max-w-5xl mx-auto' : 'max-w-3xl mx-auto'} gap-8`}>
+            {displayedArticles.map((article, i) => (
+              <motion.article
+                key={article.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ 
+                  y: -8,
+                  boxShadow: "0 25px 50px -12px rgba(239, 59, 51, 0.12)",
+                  borderColor: "rgba(239, 59, 51, 0.2)"
+                }}
+                onClick={() => window.open(article.link, '_blank', 'noopener,noreferrer')}
+                className="group relative flex flex-col justify-between h-full bg-white/[0.01] hover:bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-[2rem] overflow-hidden transition-all duration-500 p-6 sm:p-8 cursor-pointer"
+              >
+                <div>
+                  {/* Featured Image Container */}
+                  {article.image ? (
+                    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/10 mb-6 bg-black/20">
+                      <img 
+                        src={article.image} 
+                        alt={article.alt}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        loading="lazy"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0F0B26]/90 via-transparent to-transparent pointer-events-none" />
+                      
+                      {/* Category Overlay with subtle Medium branding */}
+                      <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                        <div className="flex items-center gap-1.5 px-3 py-1 bg-[#1D1842]/80 backdrop-blur-md rounded-full border border-white/10 shadow-lg">
+                          <MediumIcon className="w-3 h-3 text-[#FDA1A2]" />
+                          <span className="text-[9px] uppercase tracking-wider font-bold text-[#FDA1A2]">
+                            {article.category}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* Reading time overlay inside */}
+                      <div className="absolute bottom-4 right-4 flex items-center gap-1.5 text-[8px] uppercase font-black tracking-widest text-white/90 bg-black/40 backdrop-blur-sm px-2.5 py-1.5 rounded-md border border-white/5">
+                        <Clock size={10} className="text-[#FDA1A2]" />
+                        <span>{article.readTime}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-6 border-b border-white/5">
+                      <div className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#EF3B33]/10 backdrop-blur-md rounded-full border border-[#EF3B33]/20">
+                        <MediumIcon className="w-3.5 h-3.5 text-[#FDA1A2]" />
                         <span className="text-[9px] uppercase tracking-wider font-bold text-[#FDA1A2]">
                           {article.category}
                         </span>
                       </div>
+                      <div className="flex items-center gap-1.5 text-[9px] uppercase font-black tracking-widest text-white/50">
+                        <Clock size={12} className="text-[#FDA1A2]" />
+                        <span>{article.readTime}</span>
+                      </div>
                     </div>
-                    
-                    {/* Reading time overlay inside */}
-                    <div className="absolute bottom-4 right-4 flex items-center gap-1.5 text-[8px] uppercase font-black tracking-widest text-white/90 bg-black/40 backdrop-blur-sm px-2.5 py-1.5 rounded-md border border-white/5">
-                      <Clock size={10} className="text-[#FDA1A2]" />
-                      <span>{article.readTime}</span>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-6 border-b border-white/5">
-                    <div className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#EF3B33]/10 backdrop-blur-md rounded-full border border-[#EF3B33]/20">
-                      <MediumIcon className="w-3.5 h-3.5 text-[#FDA1A2]" />
-                      <span className="text-[9px] uppercase tracking-wider font-bold text-[#FDA1A2]">
-                        {article.category}
+                  )}
+
+                  {/* Text content area */}
+                  <div className="mb-8">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-[10px] uppercase tracking-wider font-semibold text-white/40 block">
+                        {article.date}
+                      </span>
+                      <span className="text-white/20 text-xs">•</span>
+                      <span className="text-[9px] uppercase tracking-wider font-semibold text-[#FDA1A2] bg-[#EF3B33]/10 border border-[#EF3B33]/20 rounded px-1.5 py-0.5">
+                        {article.platform}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-[9px] uppercase font-black tracking-widest text-white/50">
-                      <Clock size={12} className="text-[#FDA1A2]" />
-                      <span>{article.readTime}</span>
-                    </div>
+                    <h3 className="font-serif text-xl sm:text-2xl text-white mb-4 font-medium leading-snug group-hover:text-[#FDA1A2] transition-colors">
+                      {article.title}
+                    </h3>
+                    <p className="text-sm font-sans text-white/70 leading-relaxed font-light">
+                      {article.excerpt}
+                    </p>
                   </div>
-                )}
-
-                {/* Text content area */}
-                <div className="mb-8">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="text-[10px] uppercase tracking-wider font-semibold text-white/40 block">
-                      {article.date}
-                    </span>
-                    <span className="text-white/20 text-xs">•</span>
-                    <span className="text-[9px] uppercase tracking-wider font-semibold text-[#FDA1A2] bg-[#EF3B33]/10 border border-[#EF3B33]/20 rounded px-1.5 py-0.5">
-                      {article.platform}
-                    </span>
-                  </div>
-                  <h3 className="font-serif text-xl sm:text-2xl text-white mb-4 font-medium leading-snug group-hover:text-[#FDA1A2] transition-colors">
-                    {article.title}
-                  </h3>
-                  <p className="text-sm font-sans text-white/70 leading-relaxed font-light">
-                    {article.excerpt}
-                  </p>
                 </div>
-              </div>
 
-              {/* Read on Medium Button */}
-              <div className="pt-5 border-t border-white/5 mt-auto">
-                <motion.div 
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full bg-[#EF3B33]/10 text-white hover:bg-[#EF3B33] border border-[#EF3B33]/20 hover:border-[#EF3B33] px-5 py-3.5 text-[9px] uppercase font-black tracking-[0.25em] flex items-center justify-center gap-2 rounded-xl transition-all duration-300 font-sans cursor-pointer"
-                >
-                  Read on Medium <ExternalLink size={12} className="group-hover:translate-x-1 transition-transform" />
-                </motion.div>
-              </div>
-            </motion.article>
-          ))}
-        </div>
+                {/* Read on Medium Button */}
+                <div className="pt-5 border-t border-white/5 mt-auto">
+                  <motion.div 
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full bg-[#EF3B33]/10 text-white hover:bg-[#EF3B33] border border-[#EF3B33]/20 hover:border-[#EF3B33] px-5 py-3.5 text-[9px] uppercase font-black tracking-[0.25em] flex items-center justify-center gap-2 rounded-xl transition-all duration-300 font-sans cursor-pointer"
+                  >
+                    Read on Medium <ExternalLink size={12} className="group-hover:translate-x-1 transition-transform" />
+                  </motion.div>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        )}
       </div>
+
     </section>
   );
 };
@@ -1738,72 +1849,189 @@ const Experience = () => {
 
 
 
-const Footer = () => {
-  const text = "THANK YOU";
-  const letters = text.split("");
 
-  const letterVariants = {
-    hidden: (i: number) => {
-      const directions = [
-        { x: -200, y: -200 }, // Top-left
-        { x: 200, y: -200 },  // Top-right
-        { x: -200, y: 200 },  // Bottom-left
-        { x: 200, y: 200 },   // Bottom-right
-        { x: 0, y: -300 },    // Top
-        { x: 0, y: 300 },     // Bottom
-        { x: -300, y: 0 },    // Left
-        { x: 300, y: 0 }      // Right
-      ];
-      const dir = directions[i % directions.length];
-      return {
-        opacity: 0,
-        x: dir.x,
-        y: dir.y,
-        scale: 0.5,
-        filter: "blur(10px)",
-      };
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      scale: 1,
-      filter: "blur(0px)",
-      transition: {
-        type: "spring",
-        damping: 18,
-        stiffness: 80,
-        duration: 1.5,
-      },
-    },
-  };
 
+// --- SEO & Router Page Components ---
+
+const useSEO = (title: string, description: string) => {
+  const location = useLocation();
+  useEffect(() => {
+    document.title = title;
+    
+    // Update meta tags dynamically
+    const updateMeta = (selector: string, attr: string, value: string, fallbackType?: string) => {
+      let el = document.querySelector(selector);
+      if (!el) {
+        el = document.createElement('meta');
+        if (fallbackType === 'property') {
+          el.setAttribute('property', attr);
+        } else {
+          el.setAttribute('name', attr);
+        }
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', value);
+    };
+
+    updateMeta('meta[name="description"]', 'description', description);
+    updateMeta('meta[property="og:title"]', 'og:title', title, 'property');
+    updateMeta('meta[property="og:description"]', 'og:description', description, 'property');
+    updateMeta('meta[property="og:url"]', 'og:url', "https://rupamahato-portfolio.netlify.app" + location.pathname, 'property');
+    
+    // Canonical link
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', "https://rupamahato-portfolio.netlify.app" + location.pathname);
+  }, [title, description, location.pathname]);
+};
+
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
+
+const HomePage = () => {
+  useSEO(
+    "Rupa Mahato | Social Media Manager & Content Strategist Jamshedpur",
+    "Rupa Mahato is a professional Social Media Manager and Content Strategist in Jamshedpur, helping brands scale their organic visibility, Instagram growth, and digital footprint."
+  );
   return (
-    <footer className="py-24 px-8 border-t border-white/5 bg-[#1D1842]/80 text-white relative z-10">
-      <div className="max-w-[1720px] mx-auto w-full flex flex-col items-center text-center">
-        <motion.div 
-          className="font-serif text-5xl md:text-7xl font-bold tracking-tighter flex flex-wrap justify-center overflow-hidden"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-        >
-          {letters.map((letter, i) => (
-            <motion.span
-              key={i}
-              custom={i}
-              variants={letterVariants}
-              className="inline-block"
-            >
-              {letter === " " ? "\u00A0" : letter}
-            </motion.span>
-          ))}
-        </motion.div>
-      </div>
-    </footer>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Hero />
+      <FeaturedServices />
+      <FeaturedWork />
+      <WhyWorkWithMe />
+      <ToolsIUse />
+      <LatestInsights />
+      <FinalCTA />
+    </motion.div>
+  );
+};
+
+const AboutPage = () => {
+  useSEO(
+    "About Rupa Mahato | Portfolio & Professional Services",
+    "Discover Rupa Mahato's background as a digital marketer and content creator. Explore specialized services including Instagram audits, content calendars, and social strategy."
+  );
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.5 }}
+    >
+      <About />
+      <ServicesSection />
+    </motion.div>
+  );
+};
+
+const ExperiencePage = () => {
+  useSEO(
+    "Professional Experience | Rupa Mahato Portfolio",
+    "Review Rupa Mahato's track record of driving brand growth and successful marketing campaigns in Jharkhand and globally, including role at Yours Digitally."
+  );
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Experience />
+    </motion.div>
+  );
+};
+
+const WorkPage = () => {
+  useSEO(
+    "Selected Work & Case Studies | Rupa Mahato Portfolio",
+    "Explore Rupa Mahato's creative portfolio, featuring high-performing social media campaigns, content design projects, and organic growth case studies."
+  );
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.5 }}
+    >
+      <SelectedWork />
+    </motion.div>
+  );
+};
+
+const BlogPage = () => {
+  useSEO(
+    "Insights & Industry Blog | Rupa Mahato Portfolio",
+    "Read the latest guides, tips, and professional growth advice on Instagram SEO, social media algorithms, and digital marketing strategies from Jamshedpur."
+  );
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.5 }}
+    >
+      <InsightsSection />
+    </motion.div>
+  );
+};
+
+const BlogManagerPage = () => {
+  useSEO(
+    "Blog Feed Manager | Rupa Mahato Admin",
+    "Customize and manage which publications are displayed on your portfolio website."
+  );
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.5 }}
+    >
+      <BlogManager />
+    </motion.div>
+  );
+};
+
+const ContactPage = () => {
+  useSEO(
+    "Get In Touch | Hire Rupa Mahato",
+    "Ready to accelerate your brand's growth? Contact Rupa Mahato for professional social media management, campaign planning, and brand consultations."
+  );
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.5 }}
+    >
+      <ContactForm />
+    </motion.div>
   );
 };
 
 export default function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
+  );
+}
+
+function AppContent() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
@@ -1825,15 +2053,21 @@ export default function App() {
         style={{ scaleX }}
       />
       
+      <ScrollToTop />
       <Navbar />
-      <Hero />
-      <About />
-      <ServicesSection />
-      <Experience />
-      <SelectedWork />
-      <InsightsSection />
-      <ContactForm />
-      <Footer />
+      
+      <AnimatePresence mode="wait">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/experience" element={<ExperiencePage />} />
+          <Route path="/work" element={<WorkPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/admin" element={<BlogManagerPage />} />
+          <Route path="/blog-manager" element={<BlogManagerPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+        </Routes>
+      </AnimatePresence>
     </div>
   );
 }
